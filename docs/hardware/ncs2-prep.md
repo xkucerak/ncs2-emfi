@@ -1,4 +1,4 @@
-# Neural Compute Stick 2 dissasembly
+# Neural Compute Stick 2 disassembly
 
 - T5 screw bit
 
