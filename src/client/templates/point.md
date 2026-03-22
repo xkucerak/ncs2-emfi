@@ -33,8 +33,8 @@
 
 ### Probe
 
-| param           | value                |
-| --------------- | -------------------- |
-| **Core Width**  | {{ probe_core }} mm  |
-| **Windig**      | {{ probe_winding }}  |
-| **Aprox. Rot.** | {{ probe_rotation }} |
+| param            | value                |
+| ---------------- | -------------------- |
+| **Core Width**   | {{ probe_core }} mm  |
+| **Winding**      | {{ probe_winding }}  |
+| **Approx. Rot.** | {{ probe_rotation }} |

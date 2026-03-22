@@ -55,8 +55,8 @@
 
 ### Probe
 
-| param           | value |
-| --------------- | ----- |
-| **Core Width**  | 1 mm  |
-| **Windig**      | ccw   |
-| **Aprox. Rot.** | right |
+| param            | value |
+| ---------------- | ----- |
+| **Core Width**   | 1 mm  |
+| **Winding**      | ccw   |
+| **Approx. Rot.** | right |

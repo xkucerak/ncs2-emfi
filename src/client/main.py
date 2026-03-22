@@ -19,7 +19,6 @@ cs.pulse.repeat = 17
 cs.pulse.deadtime = 25
 cs.voltage = 440
 cs.pulse.width = 80 * 2
-cs.pulse, cs.voltage
 
 printer.move_3D(122.4, 155.2, 1.1)
 delay = 1
@@ -43,7 +42,7 @@ log.settings(
 )
 
 if cs.armed == False:
-    cs.armed = 1
+    cs.armed = True
     sleep(1)
 
 acc = Accuracy()
@@ -55,5 +54,6 @@ for _ in range(128):
     acc.top_1, acc.top_5 = s.recv(1024).decode().split(",")
     log.log(acc)
 
+cs.armed = False
 
 cs.disconnect()
