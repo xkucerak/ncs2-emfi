@@ -1,5 +1,9 @@
 # ResNet-18 128 samples
 
+![Top 1 acc](top_1.svg)
+
+![Top 5 acc](top_5.svg)
+
 |     top_1 | count |
 | --------: | ----: |
 |       NaN |    22 |
@@ -21,8 +25,6 @@
 |     0.125 |     1 |
 |  0.105469 |     2 |
 | 0.0859375 |     1 |
-
-![alt text](hisplot.svg)
 
 ## Settings
 

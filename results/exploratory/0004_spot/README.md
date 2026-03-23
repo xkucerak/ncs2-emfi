@@ -1,5 +1,9 @@
 # VGG-11 128 samples
 
+![Top 1 acc](top_1.svg)
+
+![Top 5 acc](top_5.svg)
+
 |     top_1 | count |
 | --------: | ----: |
 |       NaN |    45 |
@@ -36,8 +40,6 @@
 |  0.046875 |     1 |
 | 0.0351562 |     1 |
 |   0.03125 |     1 |
-
-![alt text](hisplot.svg)
 
 ## Settings
 

@@ -1,5 +1,9 @@
 # ResNet-50 128 samples
 
+![Top 1 acc](top_1.svg)
+
+![Top 5 acc](top_5.svg)
+
 |     top_1 | count |
 | --------: | ----: |
 |       NaN |    28 |
@@ -23,8 +27,6 @@
 | 0.0546875 |     3 |
 | 0.0507812 |     2 |
 |  0.046875 |     4 |
-
-![alt text](hisplot.svg)
 
 ## Settings
 
