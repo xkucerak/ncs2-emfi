@@ -9,7 +9,7 @@
 | param           | value               |
 | :-------------- | :------------------ |
 | **Model**       | {{ cfg_model }}     |
-| **Image count** | {{ cfg_img_count }} |
+| **Image Count** | {{ cfg_img_count }} |
 | **Delay**       | {{ cfg_delay }} s   |
 | **Top-1**       | {{ cfg_top_1 }}     |
 | **Top-5**       | {{ cfg_top_5 }}     |
