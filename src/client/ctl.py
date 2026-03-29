@@ -8,7 +8,9 @@ MAX_SIZE = 4 * 1024 * 1024
 
 
 class Control:
-    def __init__(self, x_min, x_max, y_min, y_max, z_min=None, z_max=None):
+    def __init__(
+        self: str, serial_path, x_min, x_max, y_min, y_max, z_min=None, z_max=None
+    ):
         self.step = 1
         self.path = None
         self.plot_data = []
@@ -25,10 +27,12 @@ class Control:
         self.y = None
         self.z = None
 
+        self.serial_path = serial_path
+
     # moves positional device to specified location in 2d
     def move_2D(self, x, y):
         if self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max:
-            with serial.Serial("/dev/ttyUSB0", 115200, timeout=2) as printer:
+            with serial.Serial(self.serial_path, 115200, timeout=2) as printer:
                 printer.reset_input_buffer()
                 print("Move started.")
 
@@ -57,7 +61,7 @@ class Control:
             and self.y_min <= y <= self.y_max
             and self.z_min <= z <= self.z_max
         ):
-            with serial.Serial("/dev/ttyUSB0", 115200, timeout=2) as printer:
+            with serial.Serial(self.serial_path, 115200, timeout=2) as printer:
                 printer.reset_input_buffer()
                 print("Move started.")
 

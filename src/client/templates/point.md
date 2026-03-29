@@ -1,5 +1,9 @@
 # Results
 
+![Top 1 acc](top_1.svg)
+
+![Top 5 acc](top_5.svg)
+
 {{ '{{ results }}' }}
 
 ## Settings
@@ -10,6 +14,7 @@
 | :-------------- | :------------------ |
 | **Model**       | {{ cfg_model }}     |
 | **Image Count** | {{ cfg_img_count }} |
+| **Image Seed**  | {{ cfg_img_seed }}  |
 | **Delay**       | {{ cfg_delay }} s   |
 | **Top-1**       | {{ cfg_top_1 }}     |
 | **Top-5**       | {{ cfg_top_5 }}     |

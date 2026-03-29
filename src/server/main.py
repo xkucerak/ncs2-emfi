@@ -25,12 +25,12 @@ from tqdm import tqdm
 
 device_name = "MYRIAD"
 
-SIZE = 2**8
+SEED = 21
+SIZE = 2**9
 
-MODEL_PATH = "/home/pincs/Desktop/src/models/resnet101.onnx"
+# MODEL_PATH = "/home/pincs/Desktop/src/models/resnet18.onnx"
 MODEL_PATH = "/home/pincs/Desktop/src/models/resnet50.onnx"
-MODEL_PATH = "/home/pincs/Desktop/src/models/resnet18.onnx"
-MODEL_PATH = "/home/pincs/Desktop/src/models/vgg11.onnx"
+# MODEL_PATH = "/home/pincs/Desktop/src/models/vgg11.onnx"
 
 
 def create_val_loader():
@@ -44,7 +44,7 @@ def create_val_loader():
     subset, _ = torch.utils.data.random_split(
         dataset,
         [SIZE, len(dataset) - SIZE],
-        generator=torch.Generator().manual_seed(21),
+        generator=torch.Generator().manual_seed(SEED),
     )
 
     # for idx in subset.indices:
@@ -154,17 +154,19 @@ def one_img(model, input_tensor, compiled_model):
 
 
 def full_eval(val_loader):
-    # core = Core()
-    # compiled_model = core.compile_model(model, device_name)
     try:
+        infer_request = compiled_model.create_infer_request()
+        out_layer = compiled_model.output(0)
         top_1 = torchmetrics.Accuracy(top_k=1, task="multiclass", num_classes=1000)
         top_5 = torchmetrics.Accuracy(top_k=5, task="multiclass", num_classes=1000)
         for inputs, labels in tqdm(val_loader):
             last_resp.value = time()
+            outputs = infer_request.infer({0: inputs})[out_layer]
 
-            outputs = compiled_model.infer_new_request({0: inputs})
+            # with open("raw_outputs.csv", "a") as f:
+            #     f.write(",".join(map(str, outputs.flatten().tolist())) + "\n")
 
-            outputs = torch.tensor(next(iter(outputs.values())))
+            outputs = torch.from_numpy(outputs)
 
             top_1.update(outputs, labels)
             top_5.update(outputs, labels)
@@ -174,6 +176,11 @@ def full_eval(val_loader):
         if device_name == "MYRIAD":
             temp = core.get_property("MYRIAD", "DEVICE_THERMAL")
             print(f"Device Temperature: {temp}°C")
+
+        # with open("raw_outputs.csv", "a") as f:
+        #     f.write(
+        #         str((top_1.compute().item(), "%", top_5.compute().item(), "%")) + "\n"
+        #     )
 
     except Exception as e:
         print(e)
@@ -210,7 +217,10 @@ if __name__ == "__main__":
     val_loader = create_val_loader()
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(("0.0.0.0", 5050))
+
+    calib_outputs = None
 
     s.listen(1)
 
@@ -220,10 +230,9 @@ if __name__ == "__main__":
     while True:
         print("wait")
         last_resp.value = 0
-
         data = conn.recv(1024).decode()
+        print(data)
         if data == "run":
-            print(data)
 
             # score = one_img(model, input_tensor, compiled_model)
             top_1, top_5 = full_eval(val_loader)
@@ -249,13 +258,24 @@ if __name__ == "__main__":
                     except:
                         pass
                     compiled_model = core.import_model(save, device_name)
+                    outputs = compiled_model.infer_new_request({0: input_tensor})[
+                        compiled_model.output(0)
+                    ]
+                    if calib_outputs is None:
+                        calib_outputs = outputs.copy()
+                    else:
+                        if not np.array_equal(outputs, calib_outputs):
+                            print("*" * 100)
+                        else:
+                            print("success")
                     conn.sendall((str(top_1) + "," + str(top_5)).encode())
                     break
                 except Exception as e:
                     print(e, 2)
+                    del core
+                    core = Core()
                     sleep(1)
-
         if data == "info":
-            conn.sendall(str(MODEL_PATH + "," + str(SIZE)).encode())
+            conn.sendall(str(MODEL_PATH + "," + str(SIZE) + "," + str(SEED)).encode())
 
     conn.close()

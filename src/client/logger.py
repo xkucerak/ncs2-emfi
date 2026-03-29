@@ -31,6 +31,7 @@ class Config:
     cfg_delay: float = None
     cfg_model: str = None
     cfg_img_count: int = None
+    cfg_img_seed: int = None
     cfg_top_1: float = None
     cfg_top_5: float = None
 
