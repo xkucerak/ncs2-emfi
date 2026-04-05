@@ -15,17 +15,17 @@ cs = ChipSHOUTER("/dev/ttyUSB1")
 
 cs.pulse.repeat = 1
 cs.pulse.deadtime = 1
-cs.voltage = 348
+cs.voltage = 450
 cs.pulse.width = 80 * 2
 
 print("cs init done")
 
-printer = Control("/dev/ttyUSB0", 113, 127, 148, 160, 0.5, 2)
-printer.move_3D(123.4, 155.1, 0.7)
+printer = Control("/dev/ttyUSB0", 113, 127, 148, 160, 0, 2)
+printer.move_3D(116.2, 154.5, 0.03)
 
 print("3d init done")
 
-delay = -1
+delay = 1
 
 cfg = Config(cfg_delay=delay)
 
@@ -37,7 +37,7 @@ s.sendall(b"run")
 cfg.cfg_top_1, cfg.cfg_top_5 = s.recv(1024).decode().split(",")
 print("calib run finish")
 
-log = Logger("spot_1_pulse_pre_inf")
+log = Logger("optuna")
 
 log.settings(
     Cs(cs.voltage.set, cs.pulse.repeat, cs.pulse.width, cs.pulse.deadtime),
@@ -52,7 +52,7 @@ if cs.armed == False:
 
 acc = Accuracy()
 
-for _ in tqdm(range(2**8)):
+for _ in tqdm(range(2**5)):
     if delay < 0:
         sleep(abs(delay))
         cs.pulse = True

@@ -68,7 +68,7 @@ class Control:
                 printer.write(b"G90\n")
                 printer.readline()
 
-                gcode = f"G0 X{round(x,1)} Y{round(y,1)} Z{round(z,1)} F{self._speed}\n"
+                gcode = f"G0 X{round(x,1)} Y{round(y,1)} Z{round(z,2)} F{self._speed}\n"
                 printer.write(gcode.encode())
                 printer.readline()
 
