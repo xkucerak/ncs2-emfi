@@ -51,4 +51,8 @@
 
 [ResNet-50](exploratory/1000_optuna/README.MD)
 
+|                  3D                   |                  2D                   |
+| :-----------------------------------: | :-----------------------------------: |
+| ![3d](exploratory/1000_optuna/3d.svg) | ![2d](exploratory/1000_optuna/2d.svg) |
+
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)

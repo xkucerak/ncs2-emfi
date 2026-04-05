@@ -6,6 +6,8 @@
 
 ![alt text](2d.svg)
 
+![alt text](z_vs_voltage.svg)
+
 # optuna-dashboard [data](optuna.sqlite3)
 
 ![alt text](dashboard.png)
