@@ -51,8 +51,8 @@
 
 [ResNet-50](exploratory/1000_optuna/README.MD)
 
-|                  3D                   |                  2D                   |
-| :-----------------------------------: | :-----------------------------------: |
-| ![3d](exploratory/1000_optuna/3d.svg) | ![2d](exploratory/1000_optuna/2d.svg) |
+|                  X / Y                  |                    VOLTAGE / Z                    |
+| :-------------------------------------: | :-----------------------------------------------: |
+| ![2d](exploratory/1000_optuna/2d_2.svg) | ![2d](exploratory/1000_optuna/z_vs_voltage_2.svg) |
 
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)

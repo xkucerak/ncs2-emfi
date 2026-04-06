@@ -1,12 +1,12 @@
 # ResNet-50; 64 images; 1 pulse; 0.5s after start of inference
 
-![alt text](3d.svg)
+<!-- ![alt text](3d.svg) -->
 
 > The Z value was offset to start from 0.
 
-![alt text](2d.svg)
+![alt text](2d_2.svg)
 
-![alt text](z_vs_voltage.svg)
+![alt text](z_vs_voltage_2.svg)
 
 # optuna-dashboard [data](optuna.sqlite3)
 
