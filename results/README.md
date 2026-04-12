@@ -69,9 +69,9 @@ Points in images are layered based on priority, meaning other results could be h
 
 Constant ChipSHOUTER and Z-axis value were used. 1 pulse 1 second after the start of the inference.
 
-| [ X 116.3mm / Y 154.9 mm ](exploratory\0076_optuna\README.md) | [ X 123.4 mm / Y 155.1 mm ](exploratory\0077_optuna\README.md) |
+| [ X 116.3mm / Y 154.9 mm ](exploratory/0076_optuna/README.md) | [ X 123.4 mm / Y 155.1 mm ](exploratory/0077_optuna/README.md) |
 | :-----------------------------------------------------------: | :------------------------------------------------------------: |
-|           ![alt](exploratory\0076_optuna\top_1.svg)           |           ![alt](exploratory\0077_optuna\top_1.svg)            |
+|           ![alt](exploratory/0076_optuna/top_1.svg)           |           ![alt](exploratory/0077_optuna/top_1.svg)            |
 
 ### 5. One pulse before/after the start of inference, tested on different numbers of test images on ResNet-50.
 
