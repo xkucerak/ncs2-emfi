@@ -1,0 +1,2 @@
+cs_voltage,cs_repeat,cs_width,cs_deadtime,probe_core,probe_winding,probe_rotation,pos_x,pos_y,pos_z,cfg_delay,cfg_model,cfg_img_count,cfg_img_seed,cfg_top_1,cfg_top_5
+350,1,160,1,1,ccw,right,123.4,155.1,0.25,-1,/home/pincs/Desktop/src/models/resnet50.onnx,128,21,0.7578125,0.9375

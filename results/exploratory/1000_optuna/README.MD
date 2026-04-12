@@ -4,11 +4,13 @@
 
 > The Z value was offset to start from 0.
 
-![alt text](2d_2.svg)
+> Points in images are layered based on priority, meaning other results could be hidden below points.
 
-![alt text](z_vs_voltage_2.svg)
+![alt text](2d.svg)
 
-# optuna-dashboard [data](optuna.sqlite3)
+![alt text](z_vs_voltage.svg)
+
+# optuna-dashboard
 
 ![alt text](dashboard.png)
 

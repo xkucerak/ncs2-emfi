@@ -16,7 +16,7 @@ import socket
 
 # from openvino.inference_engine import IECore
 from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
-from openvino.runtime import Core, Layout, Type
+from openvino.runtime import Core, Layout, Type, AsyncInferQueue
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.io import decode_image
@@ -26,8 +26,11 @@ from tqdm import tqdm
 device_name = "MYRIAD"
 
 SEED = 21
-SIZE = 2**9
+# SIZE = 2**5
+SIZE = 2**6
+SIZE = 2**7  # 9
 
+# MODEL_PATH = "/home/pincs/Desktop/src/models/resnet101.onnx"
 # MODEL_PATH = "/home/pincs/Desktop/src/models/resnet18.onnx"
 MODEL_PATH = "/home/pincs/Desktop/src/models/resnet50.onnx"
 # MODEL_PATH = "/home/pincs/Desktop/src/models/vgg11.onnx"
@@ -192,6 +195,47 @@ def full_eval(val_loader):
     return top_1.compute().item(), top_5.compute().item()
 
 
+def full_eval_async(val_loader):
+    try:
+        infer_queue = AsyncInferQueue(compiled_model)
+
+        out_layer = compiled_model.output(0)
+        top_1 = torchmetrics.Accuracy(top_k=1, task="multiclass", num_classes=1000)
+        top_5 = torchmetrics.Accuracy(top_k=5, task="multiclass", num_classes=1000)
+
+        def completion_callback(infer_request, user_data):
+            labels = user_data
+
+            outputs = infer_request.get_output_tensor().data
+            outputs_torch = torch.from_numpy(outputs)
+
+            top_1.update(outputs_torch, labels)
+            top_5.update(outputs_torch, labels)
+
+        infer_queue.set_callback(completion_callback)
+
+        for inputs, labels in val_loader:
+            last_resp.value = time()
+            infer_queue.start_async({0: inputs}, labels)
+
+        infer_queue.wait_all()
+
+        print(top_1.compute().item(), "%", top_5.compute().item(), "%")
+
+        if device_name == "MYRIAD":
+            temp = core.get_property("MYRIAD", "DEVICE_THERMAL")
+            print(f"Device Temperature: {temp}°C")
+
+    except Exception as e:
+        print(e)
+        last_resp.value = time() + 30
+        return -1, -1
+
+    last_resp.value = 0
+
+    return top_1.compute().item(), top_5.compute().item()
+
+
 def dog():
     while True:
         if last_resp.value != 0 and ((time() - last_resp.value) > 5):
@@ -236,6 +280,7 @@ if __name__ == "__main__":
 
             # score = one_img(model, input_tensor, compiled_model)
             top_1, top_5 = full_eval(val_loader)
+            # top_1, top_5 = full_eval_async(val_loader)
             if top_1 < 0:
                 del compiled_model
                 del core
@@ -258,7 +303,7 @@ if __name__ == "__main__":
                     except:
                         pass
                     compiled_model = core.import_model(save, device_name)
-                    outputs = compiled_model.infer_new_request({0: input_tensor})[
+                    outputs = compiled_model({0: input_tensor})[
                         compiled_model.output(0)
                     ]
                     if calib_outputs is None:
