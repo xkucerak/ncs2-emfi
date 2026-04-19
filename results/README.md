@@ -18,6 +18,10 @@
 
 [6.](#6-asynchronous-inference) Asynchronous inference
 
+[7.](#7-one-pulse-1s-before-the-start-of-asynchronous-inference-2d-scan)
+
+[8.](#8-examples-of-outputs-affected-by-the-attack)
+
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)
 
 ## Support
@@ -111,8 +115,28 @@ ResNet-50; Image Count: 128; 1 pulse 1s after start of the inference
 
 #### Asynchronous inference 2D scan
 
+Delay 0.5s after the start of inference. On 128 images.
+
 Constant ChipSHOUTER settings and Z-axis.
 
 [info](exploratory/1001_optuna/README.MD)
 
 ![alt](exploratory/1001_optuna/2d.svg)
+
+### 7. One pulse 1s before the start of asynchronous inference 2D scan
+
+Random XYZ
+
+![alt text](exploratory/1002_optuna/2d.svg)
+
+### 8. Examples of outputs affected by the attack
+
+This is an analysis of the first value of the 1000 values of the last output layer of ResNet-50. We can see a change after the attack in outputs that cause misclassification. Change seems to persist. TOP-1 accuracy close to 0%.
+
+![alt](exploratory/2000_output/example.png)
+
+Also, another type of change is one where the change is only a small difference. After calculating the change in accuracy, it represents 2 wrongly classified images compared to the unattacked model.
+
+![alt](exploratory/2000_output/example2.png)
+
+[MORE](exploratory/2000_output/)
