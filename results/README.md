@@ -18,9 +18,9 @@
 
 [6.](#6-asynchronous-inference) Asynchronous inference
 
-[7.](#7-one-pulse-1s-before-the-start-of-asynchronous-inference-2d-scan)
+[7.](#7-one-pulse-1s-before-the-start-of-asynchronous-inference-2d-scan) One pulse 1s before the start of asynchronous inference 2D scan
 
-[8.](#8-examples-of-outputs-affected-by-the-attack)
+[8.](#8-examples-of-outputs-affected-by-the-attack) Examples of outputs affected by the attack
 
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)
 
