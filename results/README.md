@@ -24,6 +24,8 @@
 
 [9.](#9-1mm-cw-probe) 1mm CW probe
 
+[10.](#10-4mm-ccw-probe) 4mm CCW probe
+
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)
 
 ## Support
@@ -167,3 +169,16 @@ Also, another type of change is one where the change is only a small difference.
 |                    Day 1                     |                    Day 2                     |
 | :------------------------------------------: | :------------------------------------------: |
 | ![alt](exploratory/0158_cw_optuna/top_1.svg) | ![alt](exploratory/0163_cw_optuna/top_1.svg) |
+
+### 10. 4mm CCW probe
+
+#### Random XYZ scan with 150V
+
+![alt](exploratory/1020_optuna/2d.svg)
+
+#### Only 150V managed to cause an accuracy drop.
+
+|                                               |                                               |
+| :-------------------------------------------: | :-------------------------------------------: |
+| ![alt](exploratory/0164_4mm_optuna/top_1.svg) | ![alt](exploratory/0168_4mm_optuna/top_1.svg) |
+| ![alt](exploratory/0166_4mm_optuna/top_1.svg) | ![alt](exploratory/0167_4mm_optuna/top_1.svg) |

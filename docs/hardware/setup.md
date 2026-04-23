@@ -22,3 +22,11 @@
 - No precise trigger of the ChipSHOUTER
 - Random outputs of the attacks
 - High dimensionality of possible settings and configurations
+
+## 3D printer Z-offset for different probes
+
+| Probe   | Z-offset |
+| ------- | -------- |
+| 1mm CCW | -1.05 mm |
+| 1mm CW  | -0.85 mm |
+| 4mm CCW | -1.75 mm |
