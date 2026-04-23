@@ -22,7 +22,7 @@
 
 [8.](#8-examples-of-outputs-affected-by-the-attack) Examples of outputs affected by the attack
 
-[9.](#9-1mm-cw-probe)
+[9.](#9-1mm-cw-probe) 1mm CW probe
 
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)
 
