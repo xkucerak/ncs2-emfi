@@ -22,6 +22,8 @@
 
 [8.](#8-examples-of-outputs-affected-by-the-attack) Examples of outputs affected by the attack
 
+[9.](#9-1mm-cw-probe)
+
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)
 
 ## Support
@@ -140,3 +142,28 @@ Also, another type of change is one where the change is only a small difference.
 ![alt](exploratory/2000_output/example2.png)
 
 [MORE](exploratory/2000_output/)
+
+### 9. 1mm CW probe
+
+#### Approximate location to 1mm CCW probe
+
+![alt](exploratory/0148_cw/top_1.svg)
+
+##### Search around the spot with random XYZ and voltage:
+
+![alt](exploratory/1010_optuna/2d.svg)
+
+|                                       |                                       |
+| :-----------------------------------: | :-----------------------------------: |
+| ![alt](exploratory/0151_cw/top_1.svg) | ![alt](exploratory/0152_cw/top_1.svg) |
+| ![alt](exploratory/0153_cw/top_1.svg) | ![alt](exploratory/0154_cw/top_1.svg) |
+
+#### Whole chip surface exploration
+
+![alt](exploratory/1010_optuna/2d_full.svg)
+
+##### Test on best location found so far
+
+|                    Day 1                     |                    Day 2                     |
+| :------------------------------------------: | :------------------------------------------: |
+| ![alt](exploratory/0158_cw_optuna/top_1.svg) | ![alt](exploratory/0163_cw_optuna/top_1.svg) |
