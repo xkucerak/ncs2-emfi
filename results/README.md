@@ -26,6 +26,8 @@
 
 [10.](#10-4mm-ccw-probe) 4mm CCW probe
 
+[11.](#11-1mm-ccw-random-fine-tune-experiemnts) 1mm CCW random fine-tune experiemnts
+
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)
 
 ## Support
@@ -182,3 +184,19 @@ Also, another type of change is one where the change is only a small difference.
 | :-------------------------------------------: | :-------------------------------------------: |
 | ![alt](exploratory/0164_4mm_optuna/top_1.svg) | ![alt](exploratory/0168_4mm_optuna/top_1.svg) |
 | ![alt](exploratory/0166_4mm_optuna/top_1.svg) | ![alt](exploratory/0167_4mm_optuna/top_1.svg) |
+
+### 11. 1mm CCW random fine-tune experiemnts
+
+|                                            |                                            |                                            |                                            |
+| :----------------------------------------: | :----------------------------------------: | :----------------------------------------: | :----------------------------------------: |
+| ![alt](exploratory/0184_1mm_ccw/top_1.svg) | ![alt](exploratory/0185_1mm_ccw/top_1.svg) | ![alt](exploratory/0186_1mm_ccw/top_1.svg) | ![alt](exploratory/0187_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0188_1mm_ccw/top_1.svg) | ![alt](exploratory/0189_1mm_ccw/top_1.svg) | ![alt](exploratory/0190_1mm_ccw/top_1.svg) | ![alt](exploratory/0191_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0193_1mm_ccw/top_1.svg) | ![alt](exploratory/0195_1mm_ccw/top_1.svg) | ![alt](exploratory/0196_1mm_ccw/top_1.svg) | ![alt](exploratory/0197_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0198_1mm_ccw/top_1.svg) | ![alt](exploratory/0199_1mm_ccw/top_1.svg) | ![alt](exploratory/0200_1mm_ccw/top_1.svg) | ![alt](exploratory/0201_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0202_1mm_ccw/top_1.svg) | ![alt](exploratory/0203_1mm_ccw/top_1.svg) | ![alt](exploratory/0204_1mm_ccw/top_1.svg) | ![alt](exploratory/0205_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0206_1mm_ccw/top_1.svg) | ![alt](exploratory/0207_1mm_ccw/top_1.svg) | ![alt](exploratory/0208_1mm_ccw/top_1.svg) | ![alt](exploratory/0209_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0210_1mm_ccw/top_1.svg) | ![alt](exploratory/0212_1mm_ccw/top_1.svg) | ![alt](exploratory/0213_1mm_ccw/top_1.svg) | ![alt](exploratory/0214_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0215_1mm_ccw/top_1.svg) | ![alt](exploratory/0216_1mm_ccw/top_1.svg) | ![alt](exploratory/0217_1mm_ccw/top_1.svg) | ![alt](exploratory/0218_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0219_1mm_ccw/top_1.svg) | ![alt](exploratory/0220_1mm_ccw/top_1.svg) | ![alt](exploratory/0221_1mm_ccw/top_1.svg) | ![alt](exploratory/0222_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0223_1mm_ccw/top_1.svg) | ![alt](exploratory/0224_1mm_ccw/top_1.svg) | ![alt](exploratory/0225_1mm_ccw/top_1.svg) | ![alt](exploratory/0226_1mm_ccw/top_1.svg) |
+| ![alt](exploratory/0227_1mm_ccw/top_1.svg) |
