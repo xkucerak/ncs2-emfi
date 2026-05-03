@@ -4,7 +4,6 @@ import re
 import sys
 import gc
 
-# import cv2
 from time import sleep, time
 import subprocess
 import multiprocessing as mp
@@ -14,7 +13,7 @@ import torch
 import torchmetrics
 import socket
 
-# from openvino.inference_engine import IECore
+
 from openvino.preprocess import PrePostProcessor, ResizeAlgorithm
 from openvino.runtime import Core, Layout, Type, AsyncInferQueue
 from torch.utils.data import DataLoader
@@ -26,11 +25,8 @@ from tqdm import tqdm
 device_name = "MYRIAD"
 
 SEED = 21
-# SIZE = 2**5
-SIZE = 2**6
-SIZE = 2**7  # 9
+SIZE = 2**7  # 7 9
 
-# MODEL_PATH = "/home/pincs/Desktop/src/models/resnet101.onnx"
 # MODEL_PATH = "/home/pincs/Desktop/src/models/resnet18.onnx"
 MODEL_PATH = "/home/pincs/Desktop/src/models/resnet50.onnx"
 # MODEL_PATH = "/home/pincs/Desktop/src/models/vgg11.onnx"
@@ -50,18 +46,11 @@ def create_val_loader():
         generator=torch.Generator().manual_seed(SEED),
     )
 
-    # for idx in subset.indices:
-    #     path, label = dataset.samples[idx]
-    #     print(path)
-    # exit()
-
     val_loader = DataLoader(
         dataset=subset,
         batch_size=BATCH,
-        # shuffle=True,
-        num_workers=2,
-        prefetch_factor=16,
-        # pin_memory=True,
+        num_workers=4,
+        prefetch_factor=32,
         persistent_workers=True,
     )
 
@@ -80,7 +69,6 @@ def model_prepare():
     print(core.available_devices)
 
     core.set_property({"CACHE_DIR": "/home/pincs/Desktop/src/cache"})
-    # core.set_property("MYRIAD", {"MYRIAD_ENABLE_FORCE_RESET": "YES"})
 
     model = core.read_model(MODEL_PATH)
 
@@ -101,9 +89,7 @@ def model_prepare():
 
     ppp.input().tensor().set_shape(input_tensor.shape).set_element_type(
         Type.f32
-    ).set_layout(
-        Layout("NCHW")
-    )  # noqa: ECE001, N400
+    ).set_layout(Layout("NCHW"))
 
     ppp.input().preprocess().resize(ResizeAlgorithm.RESIZE_LINEAR)
     ppp.input().model().set_layout(Layout("NCHW"))
@@ -122,7 +108,7 @@ def one_img(model, input_tensor, compiled_model):
         for _ in range(32):
             last_resp.value = time()
             outputs = compiled_model.infer_new_request({0: input_tensor})
-            output = list(outputs.values())[0]  # get the only output
+            output = list(outputs.values())[0]
             class_id = output.argmax(1).item()
 
             category_name = ResNet50_Weights.DEFAULT.meta["categories"][class_id]
@@ -152,8 +138,11 @@ def one_img(model, input_tensor, compiled_model):
     if device_name == "MYRIAD":
         temp = core.get_property("MYRIAD", "DEVICE_THERMAL")
         print(f"Device Temperature: {temp}°C")
-    # compiled_model.create_infer_request()
+
     return score / 32
+
+
+log_id = 0  # log
 
 
 def full_eval(val_loader):
@@ -162,28 +151,29 @@ def full_eval(val_loader):
         out_layer = compiled_model.output(0)
         top_1 = torchmetrics.Accuracy(top_k=1, task="multiclass", num_classes=1000)
         top_5 = torchmetrics.Accuracy(top_k=5, task="multiclass", num_classes=1000)
+
+        results = []  # log
+
         for inputs, labels in tqdm(val_loader):
             last_resp.value = time()
             outputs = infer_request.infer({0: inputs})[out_layer]
 
-            # with open("raw_outputs.csv", "a") as f:
-            #     f.write(",".join(map(str, outputs.flatten().tolist())) + "\n")
+            # results.append(outputs)
 
             outputs = torch.from_numpy(outputs)
 
             top_1.update(outputs, labels)
             top_5.update(outputs, labels)
 
+        global log_id
+        # np.save(f"log/{log_id}.npy", np.array(results))  # log
+        log_id += 1
+
         print(top_1.compute().item(), "%", top_5.compute().item(), "%")
 
         if device_name == "MYRIAD":
             temp = core.get_property("MYRIAD", "DEVICE_THERMAL")
             print(f"Device Temperature: {temp}°C")
-
-        # with open("raw_outputs.csv", "a") as f:
-        #     f.write(
-        #         str((top_1.compute().item(), "%", top_5.compute().item(), "%")) + "\n"
-        #     )
 
     except Exception as e:
         print(e)
@@ -195,18 +185,22 @@ def full_eval(val_loader):
     return top_1.compute().item(), top_5.compute().item()
 
 
-def full_eval_async(val_loader):
+def full_eval_async(val_loader, log_name: str = None):
     try:
         infer_queue = AsyncInferQueue(compiled_model)
 
-        out_layer = compiled_model.output(0)
         top_1 = torchmetrics.Accuracy(top_k=1, task="multiclass", num_classes=1000)
         top_5 = torchmetrics.Accuracy(top_k=5, task="multiclass", num_classes=1000)
+
+        results = []  # log
 
         def completion_callback(infer_request, user_data):
             labels = user_data
 
             outputs = infer_request.get_output_tensor().data
+
+            results.append(outputs.copy())  # log
+
             outputs_torch = torch.from_numpy(outputs)
 
             top_1.update(outputs_torch, labels)
@@ -214,13 +208,21 @@ def full_eval_async(val_loader):
 
         infer_queue.set_callback(completion_callback)
 
-        for inputs, labels in val_loader:
+        for inputs, labels in tqdm(val_loader):
             last_resp.value = time()
             infer_queue.start_async({0: inputs}, labels)
 
+        print("DONE")
+
         infer_queue.wait_all()
 
-        print(top_1.compute().item(), "%", top_5.compute().item(), "%")
+        if log_name is not None:
+            np.save(
+                f"log/{MODEL_PATH.split('/')[-1].split('.')[0]}_{SIZE}_{SEED}_{log_name}.npy",
+                np.array(results),
+            )  # log
+
+        print("TOP-1:", top_1.compute().item(), "\nTOP-5:", top_5.compute().item())
 
         if device_name == "MYRIAD":
             temp = core.get_property("MYRIAD", "DEVICE_THERMAL")
@@ -269,58 +271,96 @@ if __name__ == "__main__":
     s.listen(1)
 
     top_1 = 0
-    print("READY")
-    conn, addr = s.accept()
     while True:
-        print("wait")
-        last_resp.value = 0
-        data = conn.recv(1024).decode()
-        print(data)
-        if data == "run":
+        print("READY")
+        conn, addr = s.accept()
+        while True:
+            print("wait")
+            last_resp.value = 0
+            data = conn.recv(1024).decode()
+            if not data:
+                break
 
-            # score = one_img(model, input_tensor, compiled_model)
-            top_1, top_5 = full_eval(val_loader)
-            # top_1, top_5 = full_eval_async(val_loader)
-            if top_1 < 0:
-                del compiled_model
-                del core
-                gc.collect()
+            print(data)
+            if data == "run":
+                # score = one_img(model, input_tensor, compiled_model)
+                # top_1, top_5 = full_eval(val_loader)
+                top_1, top_5 = full_eval_async(val_loader)
+                if top_1 < 0:
+                    del compiled_model
+                    del core
+                    gc.collect()
+                    while True:
+                        try:
+                            start = time()
+                            core = Core()
+                            print(time() - start)
+                            compiled_model = core.import_model(save, device_name)
+                            print(time() - start)
+                            break
+                        except Exception as e:
+                            print(e, 1)
+                            sleep(0.5)
                 while True:
                     try:
-                        start = time()
-                        core = Core()
-                        print(time() - start)
-                        compiled_model = core.import_model(save, device_name)
-                        print(time() - start)
+                        # subprocess.run(
+                        #     ["sudo", "uhubctl", "-l", "2", "-a", "2","-d","10"]
+                        # )  # test reboot
+                        # try:
+                        #     del compiled_model
+                        # except:
+                        #     pass
+                        # compiled_model = core.import_model(save, device_name)
+                        outputs = compiled_model({0: input_tensor})[
+                            compiled_model.output(0)
+                        ]
+                        if calib_outputs is None:
+                            calib_outputs = outputs.copy()
+                        else:
+                            if not np.array_equal(outputs, calib_outputs):
+                                print("Control Image: *****FAIL*****")
+                            else:
+                                print("Control Image: SUCCESS")
+                        conn.sendall((str(top_1) + "," + str(top_5)).encode())
                         break
                     except Exception as e:
-                        print(e, 1)
-                        sleep(0.5)
-            while True:
-                try:
-                    try:
-                        del compiled_model
-                    except:
-                        pass
-                    compiled_model = core.import_model(save, device_name)
-                    outputs = compiled_model({0: input_tensor})[
-                        compiled_model.output(0)
-                    ]
-                    if calib_outputs is None:
-                        calib_outputs = outputs.copy()
+                        print(e, 2)
+                        del core
+                        core = Core()
+                        sleep(1)
+            if data == "info":
+                conn.sendall(
+                    str(MODEL_PATH + "," + str(SIZE) + "," + str(SEED)).encode()
+                )
+            if data.split(",")[0] == "seed":
+                SEED = int(data.split(",")[1])
+                val_loader = create_val_loader()
+                conn.sendall(
+                    str(MODEL_PATH + "," + str(SIZE) + "," + str(SEED)).encode()
+                )
+            if data.split(",")[0] == "size":
+                SIZE = int(data.split(",")[1])
+                val_loader = create_val_loader()
+                conn.sendall(
+                    str(MODEL_PATH + "," + str(SIZE) + "," + str(SEED)).encode()
+                )
+            if data == "reload":
+                del compiled_model
+                compiled_model = core.import_model(save, device_name)
+                conn.sendall(
+                    str(MODEL_PATH + "," + str(SIZE) + "," + str(SEED)).encode()
+                )
+            if data.split(",")[0] == "log":
+                top_1, top_5 = full_eval_async(val_loader, data.split(",")[1])
+                conn.sendall((str(top_1) + "," + str(top_5)).encode())
+            if data == "test":
+                outputs = compiled_model({0: input_tensor})[compiled_model.output(0)]
+                if calib_outputs is None:
+                    calib_outputs = outputs.copy()
+                else:
+                    if not np.array_equal(outputs, calib_outputs):
+                        print("Control Image: *****FAIL*****")
                     else:
-                        if not np.array_equal(outputs, calib_outputs):
-                            print("*" * 100)
-                        else:
-                            print("success")
-                    conn.sendall((str(top_1) + "," + str(top_5)).encode())
-                    break
-                except Exception as e:
-                    print(e, 2)
-                    del core
-                    core = Core()
-                    sleep(1)
-        if data == "info":
-            conn.sendall(str(MODEL_PATH + "," + str(SIZE) + "," + str(SEED)).encode())
+                        print("Control Image: SUCCESS")
 
     conn.close()

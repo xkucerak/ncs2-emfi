@@ -1,4 +1,4 @@
-# Preliminary Results
+# Results
 
 [1.](#1-shows-an-accuracy-drop-during-the-attack-and-also-cases-with-a-permanent-accuracy-decrease-after-the-attack) Managed to cause misclassification in:
 
@@ -27,6 +27,8 @@
 [10.](#10-4mm-ccw-probe) 4mm CCW probe
 
 [11.](#11-1mm-ccw-random-fine-tune-experiemnts) 1mm CCW random fine-tune experiemnts
+
+[12.](#12-attack-execution-example-on-resnet-50) Attack execution example on ResNet-50
 
 **Dataset** [link](https://www.kaggle.com/datasets/sautkin/imagenet1kvalid)
 
@@ -145,6 +147,24 @@ Also, another type of change is one where the change is only a small difference.
 
 ![alt](exploratory/2000_output/example2.png)
 
+#### Pulse during inference
+
+In top left is confusion matrix of classes during non-attacked state and other represent some cases of changes made by the attack.
+
+> Some classes were predicted before the attack.
+
+|                                                                     |                                                                     |                                                                     |
+| :-----------------------------------------------------------------: | :-----------------------------------------------------------------: | :-----------------------------------------------------------------: |
+| ![CROSS](exploratory/2000_output/0141_pulse_after_inference/1.png)  | ![CROSS](exploratory/2000_output/0141_pulse_after_inference/2.png)  | ![CROSS](exploratory/2000_output/0141_pulse_after_inference/3.png)  |
+| ![CROSS](exploratory/2000_output/0141_pulse_after_inference/4.png)  | ![CROSS](exploratory/2000_output/0141_pulse_after_inference/5.png)  | ![CROSS](exploratory/2000_output/0141_pulse_after_inference/8.png)  |
+| ![CROSS](exploratory/2000_output/0141_pulse_after_inference/10.png) | ![CROSS](exploratory/2000_output/0141_pulse_after_inference/11.png) | ![CROSS](exploratory/2000_output/0141_pulse_after_inference/16.png) |
+
+#### Pulse before inference
+
+|                                                                     |                                                                     |                                                                     |
+| :-----------------------------------------------------------------: | :-----------------------------------------------------------------: | :-----------------------------------------------------------------: |
+| ![CROSS](exploratory/2000_output/0140_pulse_before_inference/1.png) | ![CROSS](exploratory/2000_output/0140_pulse_before_inference/2.png) | ![CROSS](exploratory/2000_output/0140_pulse_before_inference/8.png) |
+
 [MORE](exploratory/2000_output/)
 
 ### 9. 1mm CW probe
@@ -200,3 +220,13 @@ Also, another type of change is one where the change is only a small difference.
 | ![alt](exploratory/0219_1mm_ccw/top_1.svg) | ![alt](exploratory/0220_1mm_ccw/top_1.svg) | ![alt](exploratory/0221_1mm_ccw/top_1.svg) | ![alt](exploratory/0222_1mm_ccw/top_1.svg) |
 | ![alt](exploratory/0223_1mm_ccw/top_1.svg) | ![alt](exploratory/0224_1mm_ccw/top_1.svg) | ![alt](exploratory/0225_1mm_ccw/top_1.svg) | ![alt](exploratory/0226_1mm_ccw/top_1.svg) |
 | ![alt](exploratory/0227_1mm_ccw/top_1.svg) |
+
+### 12. Attack execution example on ResNet-50
+
+These examples start with a classification of 128 images during which the fault is introduced. The injection repeats with 1 pulse per 128 images until we notice an accuracy decrease. In the next step, we change the seed and number of images and run the inference on unseen images. After this, we perform a model reload and run inference again. And at this point, NCS2 classifies images as before.
+
+|                                                                                             |                                                                                                                                                                                                                                           |
+| :-----------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  The attack resulted in an accuracy loss, but not zero accuracy. (Rare case for ResNet-50)  | The attack resulted in total accuracy lost. After the attack, the model only classified all images into one class. In this case, it is possible that multiple classes had maxed-out values to 1023.5. (Usual result of successful attack) |
+| [VIDEO](https://drive.google.com/file/d/1fizPvURc0byBXUfkeN3yKu094YwBxRfk/view?usp=sharing) |                                                                        [VIDEO](https://drive.google.com/file/d/1hb8b53sGcEqFw4xgC4tBch1pWrrmSaM9/view?usp=sharing)                                                                        |
+|                          ![CROSS](exploratory/3000_live/cross.png)                          |                                                                                                 ![CROSS](exploratory/3001_live/cross.png)                                                                                                 |

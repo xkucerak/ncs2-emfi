@@ -14,7 +14,7 @@ class Control:
         self.step = 1
         self.path = None
         self.plot_data = []
-        self._speed = 500
+        self._speed = 100
 
         self.x_min = x_min
         self.x_max = x_max
@@ -68,7 +68,7 @@ class Control:
                 printer.write(b"G90\n")
                 printer.readline()
 
-                gcode = f"G0 X{round(x,1)} Y{round(y,1)} Z{round(z,2)} F{self._speed}\n"
+                gcode = f"G0 X{round(x,4)} Y{round(y,4)} Z{round(z,2)} F{self._speed}\n"
                 printer.write(gcode.encode())
                 printer.readline()
 
